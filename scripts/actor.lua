@@ -1,3 +1,7 @@
+--actor.lua
+--File that contains default scripts for all actor-based objects
+
+
 --Using this with Physal Body created may cause unexpected behaviour
 function SetActorLocation (actor,location)
   actor.Location=location;
@@ -21,6 +25,14 @@ function MoveY (actor,value)
   vect.y=y + value;
   vect.x=actor.Location.x;
     SetActorLocation(actor,vect);
+end
+
+function OnBeginCollision (actor,otherActor,fixtureA,fixtureB)
+  --Copy this function to your script and add actions
+end
+
+function OnEndCollision (actor,otherActor,fixtureA,fixtureB)
+  --Copy this function to your script and add actions
 end
 
 function AddChild (parent,child)
