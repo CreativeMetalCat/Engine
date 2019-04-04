@@ -2,7 +2,9 @@
 #include "Object.h"
 #include "Sprite.h"
 
+#ifndef BOX2D_H
 #include <Box2D.h>
+#endif
 
 #define CLASS_ACTOR 2
 
@@ -15,7 +17,23 @@ protected:
 
 	std::vector<std::shared_ptr<Actor>> Children;
 
+	//is set manually or by some function in children class
+	//unnessesary if alternative already exists
+	bool physBodyInitialized = false;
+
+	//it's id that is usually assinged by layer on the map 
+	//needed for the optimization
+	int area_id = 0;
 public:
+	void SetAreaId(int id) { area_id = id; }
+
+	int GetAreaId()const { return area_id; }
+
+	
+	bool GetPhysBodyInitialized()const { return physBodyInitialized; }
+	
+	void SetPhysBodyInitialized(bool is) { physBodyInitialized = is; }
+
 	//Physical body of the actor
 	std::shared_ptr<b2Body>Body;
 
@@ -60,6 +78,14 @@ public:
 
 	//Create LUA class from this for usage in LUA
 	static void RegisterClassLUA(lua_State *&L);
+
+	//PATH - Path to main folder and usually used to access scripts
+	//Defined by window.lua
+	virtual void OnBeginCollision(std::shared_ptr<Object> otherActor, b2Fixture *fixtureA, b2Fixture *fixtureB, std::string PATH);
+
+	//PATH - Path to main folder and usually used to access scripts
+	//Defined by window.lua
+	virtual void OnEndCollision(std::shared_ptr<Actor> otherActor, b2Fixture *fixtureA, b2Fixture *fixtureB, std::string PATH);
 
 	Actor(sf::Vector2f Location);
 	~Actor();
