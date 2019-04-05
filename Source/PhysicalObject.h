@@ -1,5 +1,6 @@
 #pragma once
 #include "Actor.h"
+#include "PhysicalMaterial.h"
 
 //Basic object that simulates physics
 //Unlike all other Actor's children it is supossed to have functionality to play sounds on hit etc.
@@ -10,6 +11,8 @@ class PhysicalObject : public Actor
 	float mass = 1.f;
 
 	bool isMovingOnX = false;
+
+	std::shared_ptr<PhysicalMaterial> PhysMaterial;
 public:
 
 	bool GetIsMovingOnX()const { return isMovingOnX; }
