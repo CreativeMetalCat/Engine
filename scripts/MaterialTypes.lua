@@ -10,5 +10,10 @@ AmoutOfBulletImpactSounds=1,
 BulletImpactSounds=
   {
     "wood_box_impact_bullet"
+  },
+  AmountOfImpactSounds=0,
+  ImpactSounds=
+  {
+
   }
 }
