@@ -11,6 +11,8 @@ extern "C"
 #include <LuaBridge/LuaBridge.h>
 
 //#include "MainFuncLib.h"
+#include <SFML/Graphics.hpp>
+
 
 #define CLASS_OBJECT 1
 
@@ -20,7 +22,7 @@ class Object
 protected:
 	
 public:
-
+	std::string path;
 	//ID of parent for checking
 	//default is Object
 	static const int ParentClassID = CLASS_OBJECT;
@@ -43,9 +45,10 @@ public:
 	//Create LUA class from this for usage in LUA
 	static void RegisterClassLUA(lua_State *&L);
 
-	virtual void Init(){}
+	virtual void Init(std::string path){}
 
-	Object();
+	virtual void Update(sf::Time) {}
+	Object(std::string path);
 	~Object();
 };
 

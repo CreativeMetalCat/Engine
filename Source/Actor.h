@@ -24,7 +24,16 @@ protected:
 	//it's id that is usually assinged by layer on the map 
 	//needed for the optimization
 	int area_id = 0;
+
+	//LUA file that will be used
+	std::string CollisionScriptFileName;
 public:
+	//LUA file that will be used
+	void SetCollisionScriptFileName(std::string CollisionScriptFileName) { this->CollisionScriptFileName = CollisionScriptFileName; }
+
+	//LUA file that will be used
+	std::string GetCollisionScriptFileName()const { return CollisionScriptFileName; }
+
 	void SetAreaId(int id) { area_id = id; }
 
 	int GetAreaId()const { return area_id; }
@@ -35,7 +44,11 @@ public:
 	void SetPhysBodyInitialized(bool is) { physBodyInitialized = is; }
 
 	//Physical body of the actor
-	std::shared_ptr<b2Body>Body;
+	//find way use smart pointers right now it does not
+	b2Body* Body;
+
+	//for the lua
+	b2Body* GetBody()const { return Body; }
 
 	//returns copy of the Array
 	//Made primarly for the LUA
@@ -87,7 +100,7 @@ public:
 	//Defined by window.lua
 	virtual void OnEndCollision(std::shared_ptr<Actor> otherActor, b2Fixture *fixtureA, b2Fixture *fixtureB, std::string PATH);
 
-	Actor(sf::Vector2f Location);
+	Actor(sf::Vector2f Location, std::string path="./../");
 	~Actor();
 };
 

@@ -100,7 +100,7 @@ void PhysicalMaterial::Init(std::string PATH)
 	}
 }
 
-PhysicalMaterial::PhysicalMaterial(std::string name):name(name)
+PhysicalMaterial::PhysicalMaterial(std::string name, std::string path):Object(path),name(name)
 {
 
 }

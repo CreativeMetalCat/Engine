@@ -53,6 +53,7 @@ void Actor::RegisterClassLUA(lua_State *&L)
 			.addProperty("AreaId",&Actor::GetAreaId,&Actor::SetAreaId)
 			.addFunction("AddChildRaw", &Actor::AddChildRaw)
 			.addFunction("GetChild", &Actor::GetChild)
+			.addFunction("GetBody",&Actor::GetBody)
 			.endClass();
 	}
 	catch(LuaException e)
@@ -145,7 +146,7 @@ void Actor::OnEndCollision(std::shared_ptr<Actor> otherActor, b2Fixture * fixtur
 
 }
 
-Actor::Actor(sf::Vector2f Location):Location(Location)
+Actor::Actor(sf::Vector2f Location, std::string path):Object(path),Location(Location)
 {
 	
 }

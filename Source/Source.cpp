@@ -12,13 +12,14 @@ std::string PATH = "C:/Users/catgu/source/repos/Engine/x64/Debug/";
 //a = &(*actor);
 int main()
 {
-	std::shared_ptr<Actor> actor = std::make_shared<Actor>(sf::Vector2f(120, 675));
+
+	std::shared_ptr<Actor> actor = std::make_shared<Actor>(sf::Vector2f(120, 675),PATH);
 
 
 
 	lua_State* L = luaL_newstate();
 
-	Actor *a = new Actor(sf::Vector2f(23, 23));
+	
 	std::string d = (PATH + "scripts/actor.lua");
 	try
 	{
@@ -53,7 +54,7 @@ int main()
 		}
 		if (LuaAddChild.isFunction())
 		{
-			LuaAddChild(&(*actor), a);
+			//LuaAddChild(&(*actor), a);
 		}
 		LuaMoveX(&(*actor), -1000);
 		LuaRef c = LuaGetChild(&(*actor), 0);
@@ -82,6 +83,8 @@ int main()
 
 
 		Game game(title, sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), PATH);
+		
+		
 		game.Init();
 
 		game.Run();

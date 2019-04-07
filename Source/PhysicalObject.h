@@ -27,7 +27,7 @@ public:
 
 	void Init(std::string path)override;
 
-	PhysicalObject(sf::Vector2f position, std::string MaterialName = "");
+	PhysicalObject(sf::Vector2f position, std::string path, std::string MaterialName = "");
 	~PhysicalObject();
 };
 

@@ -23,7 +23,7 @@ void Object::RegisterClassLUA(lua_State *&L)
 	}
 }
 
-Object::Object()
+Object::Object(std::string path):path(path)
 {
 }
 

@@ -80,7 +80,7 @@ public:
 
 	virtual void Init(std::string PATH);
 
-	PhysicalMaterial(std::string name);
+	PhysicalMaterial(std::string name, std::string path);
 	~PhysicalMaterial();
 };
 
