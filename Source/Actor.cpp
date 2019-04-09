@@ -2,18 +2,18 @@
 
 
 
-void Actor::AddChildRaw(Actor * a)
+void CActor::AddChildRaw(CActor * a)
 {
-	std::shared_ptr<Actor>ptr(a);
+	std::shared_ptr<CActor>ptr(a);
 	this->Children.push_back(ptr);
 }
 
-void Actor::AddChild(std::shared_ptr<Actor> a)
+void CActor::AddChild(std::shared_ptr<CActor> a)
 {
 	this->Children.push_back(a);
 }
 
-Actor * Actor::GetChild(unsigned int index)
+CActor * CActor::GetChild(unsigned int index)
 {
 	if (index < this->Children.size())
 	{
@@ -25,7 +25,7 @@ Actor * Actor::GetChild(unsigned int index)
 	}
 }
 
-std::shared_ptr<Actor> Actor::GetChildAsSharedPtr(unsigned int index)
+std::shared_ptr<CActor> CActor::GetChildAsSharedPtr(unsigned int index)
 {
 	if (index < this->Children.size() - 1 && index >= 0)
 	{
@@ -39,21 +39,21 @@ std::shared_ptr<Actor> Actor::GetChildAsSharedPtr(unsigned int index)
 }
 
 
-void Actor::RegisterClassLUA(lua_State *&L)
+void CActor::RegisterClassLUA(lua_State *&L)
 {
 	using namespace luabridge;
 	try
 	{
-		//Register Actor in lua
+		//Register CActor in lua
 		getGlobalNamespace(L)
-			.beginClass<Actor>("Actor")
+			.beginClass<CActor>("CActor")
 			.addConstructor<void(*) (sf::Vector2f)>()
-			.addProperty("Location", &Actor::GetActorLocation, &Actor::SetActorLocation)
-			.addProperty("PhysBodyInitialized",&Actor::GetPhysBodyInitialized,&Actor::SetPhysBodyInitialized)
-			.addProperty("AreaId",&Actor::GetAreaId,&Actor::SetAreaId)
-			.addFunction("AddChildRaw", &Actor::AddChildRaw)
-			.addFunction("GetChild", &Actor::GetChild)
-			.addFunction("GetBody",&Actor::GetBody)
+			.addProperty("Location", &CActor::GetActorLocation, &CActor::SetActorLocation)
+			.addProperty("PhysBodyInitialized",&CActor::GetPhysBodyInitialized,&CActor::SetPhysBodyInitialized)
+			.addProperty("AreaId",&CActor::GetAreaId,&CActor::SetAreaId)
+			.addFunction("AddChildRaw", &CActor::AddChildRaw)
+			.addFunction("GetChild", &CActor::GetChild)
+			.addFunction("GetBody",&CActor::GetBody)
 			.endClass();
 	}
 	catch(LuaException e)
@@ -67,7 +67,7 @@ void Actor::RegisterClassLUA(lua_State *&L)
 	}
 }
 
-void Actor::OnBeginCollision(std::shared_ptr<Object> otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
+void CActor::OnBeginCollision(std::shared_ptr<CObject> otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
 {
 	using namespace luabridge;
 	lua_State* L = luaL_newstate();
@@ -75,7 +75,11 @@ void Actor::OnBeginCollision(std::shared_ptr<Object> otherActor, b2Fixture * fix
 	try
 	{
 
-		luaL_dofile(L, d.c_str());
+		int status = luaL_dofile(L, d.c_str());
+		if (status != 0)
+		{
+			fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+		}
 		luaL_openlibs(L);
 
 		lua_pcall(L, 0, 0, 0);
@@ -83,7 +87,7 @@ void Actor::OnBeginCollision(std::shared_ptr<Object> otherActor, b2Fixture * fix
 		//Register this class in lua
 		this->RegisterClassLUA(L);
 
-		//register other actor's class
+		//register other CActor's class
 		otherActor->RegisterClassLUA(L);
 
 		//Register b2Fixture in lua
@@ -108,23 +112,27 @@ void Actor::OnBeginCollision(std::shared_ptr<Object> otherActor, b2Fixture * fix
 	}
 }
 
-void Actor::OnEndCollision(std::shared_ptr<Actor> otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
+void CActor::OnEndCollision(std::shared_ptr<CActor> otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
 {
 	using namespace luabridge;
 	lua_State* L = luaL_newstate();
-	std::string d = (PATH + "scripts/actor.lua");
+	std::string d = (PATH + "scripts/CActor.lua");
 	try
 	{
 
-		luaL_dofile(L, d.c_str());
+		int status = luaL_dofile(L, d.c_str());
+		if (status != 0)
+		{
+			fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+		}
 		luaL_openlibs(L);
 
 		lua_pcall(L, 0, 0, 0);
 
-		//Register Actor in lua
-		Actor::RegisterClassLUA(L);
+		//Register CActor in lua
+		CActor::RegisterClassLUA(L);
 
-		//register other actor's class
+		//register other CActor's class
 		otherActor->RegisterClassLUA(L);
 
 		//Register b2Fixture in lua
@@ -146,12 +154,12 @@ void Actor::OnEndCollision(std::shared_ptr<Actor> otherActor, b2Fixture * fixtur
 
 }
 
-Actor::Actor(sf::Vector2f Location, std::string path):Object(path),Location(Location)
+CActor::CActor(sf::Vector2f Location, std::string path):CObject(path),Location(Location)
 {
 	
 }
 
 
-Actor::~Actor()
+CActor::~CActor()
 {
 }

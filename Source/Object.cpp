@@ -1,16 +1,16 @@
 #include "Object.h"
 
 
-void Object::RegisterClassLUA(lua_State *&L)
+void CObject::RegisterClassLUA(lua_State *&L)
 {
 	using namespace luabridge;
 	try
 	{
-	//Register Actor in lua
+	//Register CActor in lua
 	getGlobalNamespace(L)
-		.beginClass<Object>("Object")
-		.addFunction("GetClassID", &Object::GetClassID)
-		.addFunction("Init", &Object::Init)
+		.beginClass<CObject>("CObject")
+		.addFunction("GetClassID", &CObject::GetClassID)
+		.addFunction("Init", &CObject::Init)
 		.endClass();
 	}
 	catch (LuaException e)
@@ -23,11 +23,11 @@ void Object::RegisterClassLUA(lua_State *&L)
 	}
 }
 
-Object::Object(std::string path):path(path)
+CObject::CObject(std::string path):path(path)
 {
 }
 
 
-Object::~Object()
+CObject::~CObject()
 {
 }

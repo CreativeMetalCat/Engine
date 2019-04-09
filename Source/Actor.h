@@ -9,13 +9,13 @@
 #define CLASS_ACTOR 2
 
 //Base of all objects that can be placed in the scene
-class Actor : public Object
+class CActor : public CObject
 {
 
 protected:	
 	sf::Vector2f Location;	
 
-	std::vector<std::shared_ptr<Actor>> Children;
+	std::vector<std::shared_ptr<CActor>> Children;
 
 	//is set manually or by some function in children class
 	//unnessesary if alternative already exists
@@ -43,39 +43,40 @@ public:
 	
 	void SetPhysBodyInitialized(bool is) { physBodyInitialized = is; }
 
-	//Physical body of the actor
+	//Physical body of the CActor
 	//find way use smart pointers right now it does not
 	b2Body* Body;
 
 	//for the lua
-	b2Body* GetBody()const { return Body; }
+	//not const for LUA
+	b2Body* GetBody() { return Body; }
 
 	//returns copy of the Array
 	//Made primarly for the LUA
-	std::vector<std::shared_ptr<Actor>> GetChildren()const { return Children; }
+	std::vector<std::shared_ptr<CActor>> GetChildren()const { return Children; }
 	
 	//Add child to array
 	//Made primarly for the LUA
-	void AddChildRaw(Actor*a);
+	void AddChildRaw(CActor*a);
 
 	//Add child to array
 	//Made primarly for the LUA
-	void AddChild(std::shared_ptr<Actor> a);
+	void AddChild(std::shared_ptr<CActor> a);
 
 	//Get child by index
 	//Made primarly for the LUA
-	Actor* GetChild(unsigned int index);
+	CActor* GetChild(unsigned int index);
 
 	//Get child by index
-	std::shared_ptr<Actor> GetChildAsSharedPtr(unsigned int index);
+	std::shared_ptr<CActor> GetChildAsSharedPtr(unsigned int index);
 
 	//ID of parent for checking
-	//default is Object
+	//default is CObject
 	static const int ParentClassID = CLASS_OBJECT;
 
 	//ID of class for Casting
 	//ID MUST be defined in the beggining of the file with class
-	//default is Object
+	//default is CObject
 	static const int ClassID = CLASS_ACTOR;
 
 	sf::Vector2f GetActorLocation() const { return Location; }
@@ -94,13 +95,13 @@ public:
 
 	//PATH - Path to main folder and usually used to access scripts
 	//Defined by window.lua
-	virtual void OnBeginCollision(std::shared_ptr<Object> otherActor, b2Fixture *fixtureA, b2Fixture *fixtureB, std::string PATH);
+	virtual void OnBeginCollision(std::shared_ptr<CObject> otherActor, b2Fixture *fixtureA, b2Fixture *fixtureB, std::string PATH);
 
 	//PATH - Path to main folder and usually used to access scripts
 	//Defined by window.lua
-	virtual void OnEndCollision(std::shared_ptr<Actor> otherActor, b2Fixture *fixtureA, b2Fixture *fixtureB, std::string PATH);
+	virtual void OnEndCollision(std::shared_ptr<CActor> otherActor, b2Fixture *fixtureA, b2Fixture *fixtureB, std::string PATH);
 
-	Actor(sf::Vector2f Location, std::string path="./../");
-	~Actor();
+	CActor(sf::Vector2f Location, std::string path="./../");
+	~CActor();
 };
 
