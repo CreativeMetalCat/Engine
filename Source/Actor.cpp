@@ -67,7 +67,7 @@ void CActor::RegisterClassLUA(lua_State *&L)
 	}
 }
 
-void CActor::OnBeginCollision(std::shared_ptr<CObject> otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
+void CActor::OnBeginCollision(CActor* otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
 {
 	using namespace luabridge;
 	lua_State* L = luaL_newstate();
@@ -112,11 +112,11 @@ void CActor::OnBeginCollision(std::shared_ptr<CObject> otherActor, b2Fixture * f
 	}
 }
 
-void CActor::OnEndCollision(std::shared_ptr<CActor> otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
+void CActor::OnEndCollision(CActor* otherActor, b2Fixture * fixtureA, b2Fixture * fixtureB, std::string PATH)
 {
 	using namespace luabridge;
 	lua_State* L = luaL_newstate();
-	std::string d = (PATH + "scripts/CActor.lua");
+	std::string d = (PATH + "scripts/actor.lua");
 	try
 	{
 

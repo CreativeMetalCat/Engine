@@ -2,7 +2,7 @@
 #include "Actor.h"
 
 //base class for the Charaters,that defines basic movement using Box2D's physics and LUA as well as basic collision
-class Character : public Actor
+class Character : public CActor
 {
 protected:
 	sf::Vector2f MaxVelocity = sf::Vector2f(500, 500);
@@ -48,7 +48,7 @@ public:
 	}
 	inline void MoveX(float value);
 
-	inline void MoveY(float value);
+	DEPRECATED_ERROR inline void MoveY(float value);
 
 	virtual void Init(std::string path);
 	virtual void InitPhysBody(std::string path,b2World &world);

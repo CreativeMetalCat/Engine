@@ -9,11 +9,11 @@ using namespace luabridge;
 
 std::string PATH = "C:/Users/catgu/source/repos/Engine/x64/Debug/";
 
-//a = &(*actor);
+//a = &(*CActor);
 int main()
 {
-
-	std::shared_ptr<Actor> actor = std::make_shared<Actor>(sf::Vector2f(120, 675),PATH);
+	
+	std::shared_ptr<CActor> actor = std::make_shared<CActor>(sf::Vector2f(120, 675),PATH);
 
 
 
@@ -24,13 +24,17 @@ int main()
 	try
 	{
 
-		luaL_dofile(L, d.c_str());
+		int status = luaL_dofile(L, d.c_str());
+		if (status != 0)
+		{
+			fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
+		}
 		luaL_openlibs(L);
 
 		lua_pcall(L, 0, 0, 0);
 
-		//Register Actor in lua
-		Actor::RegisterClassLUA(L);
+		//Register CActor in lua
+		CActor::RegisterClassLUA(L);
 
 		//Register Vector2 in lua
 		getGlobalNamespace(L)
@@ -54,11 +58,11 @@ int main()
 		}
 		if (LuaAddChild.isFunction())
 		{
-			//LuaAddChild(&(*actor), a);
+			//LuaAddChild(&(*CActor), a);
 		}
 		LuaMoveX(&(*actor), -1000);
 		LuaRef c = LuaGetChild(&(*actor), 0);
-		Actor*k = c.cast<Actor*>();
+		CActor*k = c.cast<CActor*>();
 
 
 		d = (PATH + "scripts/window.lua");
