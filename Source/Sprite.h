@@ -1,6 +1,6 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 
+#include <SFML/Graphics.hpp>
 //class that includes sf::Sprite and handles animations etc.
 class Sprite
 {

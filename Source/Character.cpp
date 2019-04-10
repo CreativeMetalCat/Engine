@@ -4,30 +4,39 @@
 
 void Character::MoveX(float value)
 {
+	
+
+	float vel = (value*this->GetMaxVelocity().x) - this->GetLinearVelocity().x;
+	float impulse = this->GetBody()->GetMass()*vel;
+	this->GetBody()->ApplyLinearImpulseToCenter(b2Vec2(impulse, 0), true);
+}
+
+void Character::MoveY(float value)
+{
 	using namespace luabridge;
 
 
 	lua_State* L = luaL_newstate();
 
 
-	std::string d = (path + "scripts/"+this->MovementScriptFileName);
+	std::string d = (path + "scripts/" + this->MovementScriptFileName);
 	try
 	{
 
-		
-		
+
+
 
 		int status = luaL_dofile(L, d.c_str());
 		if (status != 0)
 		{
 			fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
 		}
-		
+
 
 		luaL_openlibs(L);
 
 		lua_pcall(L, 0, 0, 0);
-		//Register Actor in lua
+		//Register CActor in lua
 		Character::RegisterClassLUA(L);
 
 		//Register Vector2 in lua
@@ -56,8 +65,8 @@ void Character::MoveX(float value)
 
 		LuaRef LuaSetActorLocation = getGlobal(L, "SetActorLocation");
 		auto d = this->GetBody();
-		LuaRef LuaMoveX = getGlobal(L, "Move");
-		
+		LuaRef LuaMoveX = getGlobal(L, "MoveY");
+
 		if (!LuaMoveX.isNil())
 		{
 			LuaMoveX(this->As<Character*>(), value);
@@ -66,68 +75,6 @@ void Character::MoveX(float value)
 		{
 			throw std::exception("Failed to find function: Move");
 		}
-	}
-	catch (LuaException e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-
-	catch (std::exception e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-
-}
-
-void Character::MoveY(float value)
-{
-	using namespace luabridge;
-
-
-	lua_State* L = luaL_newstate();
-
-
-	std::string d = (path + "scripts/" + this->MovementScriptFileName);
-	try
-	{
-
-		luaL_loadfile(L, d.c_str());
-		luaL_openlibs(L);
-
-		
-		lua_pcall(L, 0, 0, 0);
-		//Register Actor in lua
-		Actor::RegisterClassLUA(L);
-
-		//Register Vector2 in lua
-		getGlobalNamespace(L)
-			.beginClass<sf::Vector2f>("Vector2")
-			//add x,y and some functions possibly
-			.addData<float>("x", &sf::Vector2<float>::x)
-			.addData<float>("y", &sf::Vector2<float>::y)
-			.addConstructor<void(*) (void)>()
-			.endClass();
-
-		getGlobalNamespace(L)
-			.beginClass<b2Body>("b2Body")
-			.addFunction("GetLinearVelocity", &b2Body::GetLinearVelocity)
-			.addFunction("GetMass", &b2Body::GetMass)
-			.addFunction("ApplyImpulse", &b2Body::ApplyLinearImpulseToCenter)
-			.endClass();
-
-		getGlobalNamespace(L)
-			.beginClass<b2Vec2>("b2Vector")
-			.addData<float>("x", &b2Vec2::x)
-			.addData<float>("y", &b2Vec2::y)
-			.addConstructor<void(*) (void)>()
-			.endClass();
-
-		
-
-		auto d = this->GetBody()->GetLinearVelocity();
-		LuaRef LuaMoveX = getGlobal(L, "MoveX");
-
-		LuaMoveX(this, -1);
 	}
 	catch (LuaException e)
 	{
@@ -174,6 +121,7 @@ void Character::InitPhysBody(std::string path, b2World & world)
 	b2BodyDef defP;
 	defP.type = b2BodyType::b2_dynamicBody;
 	defP.position.Set(Location.x + Size.x / 2, Location.y + Size.y / 2);
+	
 
 	this->Body = world.CreateBody(&defP);
 
@@ -192,7 +140,10 @@ void Character::InitPhysBody(std::string path, b2World & world)
 	b2FixtureDef TriggerFixtureP;
 	TriggerFixtureP.density = 1.f;
 	TriggerFixtureP.shape = &shape;
+	TriggerFixtureP.density = 1.f;
+	TriggerFixtureP.isSensor = false;
 
+	this->Body->SetBullet(true);
 
 	this->Body->CreateFixture(&TriggerFixtureP);
 	this->Body->SetUserData(this);
@@ -203,7 +154,7 @@ void Character::RegisterClassLUA(lua_State *& L)
 	using namespace luabridge;
 	try
 	{
-		//Register Actor in lua
+		//Register CActor in lua
 		getGlobalNamespace(L)
 			.beginClass<Character>("Character")
 			//.addConstructor<void(*) (sf::ConvexShape CollisionShape, sf::Vector2f Size, sf::Vector2f Location, std::string path)>()
@@ -242,7 +193,7 @@ void Character::Update(sf::Time dt)
 	this->Location.y = Body->GetPosition().y;
 }
 
-Character::Character(sf::ConvexShape CollisionShape, sf::Vector2f Size,sf::Vector2f Location, std::string path):Actor(Location,path),Size(Size),CollisionShape(CollisionShape)
+Character::Character(sf::ConvexShape CollisionShape, sf::Vector2f Size,sf::Vector2f Location, std::string path):CActor(Location,path),Size(Size),CollisionShape(CollisionShape)
 {
 	if (CollisionShape.getPointCount() > 8)
 	{
